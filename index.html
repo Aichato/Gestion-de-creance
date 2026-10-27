@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Suivi des créances</title>
+<title>AMAA - Suivi des créances</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
 :root{--bg:#eef1f0;--surf:#fff;--ink:#12201c;--mut:#5b6b66;--line:#d6ddda;--late:#b3261e;--lateb:#fbe9e7;--soon:#9a5b00;--soonb:#fff1d6;--ok:#1b6e52;--okb:#e0f2ea;--run:#2f4a6b;--runb:#e4ebf4;--acc:#12201c;--accink:#fff;color-scheme:light}
@@ -15,6 +15,7 @@ h1,h2,.big{font-family:"Bricolage Grotesque","IBM Plex Sans",system-ui,sans-seri
 header{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:flex-end;margin-bottom:16px}
 h1{font-size:clamp(24px,4vw,34px);line-height:1.1}
 .sub{color:var(--mut);margin:4px 0 0}
+.brand{display:flex;gap:14px;align-items:center}#logo{height:84px;width:auto;background:#fff;border-radius:8px;padding:4px}.mark{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;font-size:26px;letter-spacing:.08em;padding:8px 14px;background:var(--acc);color:var(--accink);border-radius:8px}
 .tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
 button,.btn{font:inherit;font-weight:500;border:1px solid var(--line);background:var(--surf);color:var(--ink);padding:8px 14px;border-radius:8px;cursor:pointer}
 .pri{background:var(--acc)!important;color:var(--accink)!important;border-color:var(--acc)!important}
@@ -58,7 +59,7 @@ td.r{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;padding-
 <body>
 <div class="wrap">
 <header>
- <div><h1>Suivi des créances</h1><p class="sub" id="meta"></p></div>
+ <div class="brand"><img src="logo.png" alt="AMAA" id="logo"><div><h1>Suivi des créances</h1><p class="sub" id="meta"></p></div></div>
  <div class="tools" style="margin:0">
   <label>Alerte à <input type="number" id="thr" min="0" max="90" value="7" style="width:62px"> jours</label>
   <label>Devise <input id="cur" value="FCFA" style="width:72px"></label>
@@ -81,7 +82,6 @@ td.r{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;padding-
  <label class="btn">Importer Excel/CSV<input type="file" id="file" accept=".xlsx,.xls,.csv" hidden></label>
  <button id="xlsx">Exporter Excel</button>
  <button id="csv">Exporter CSV</button>
- <button id="demo">Exemple</button>
  <button id="wipe">Tout effacer</button>
 </div>
 <div class="scroll"><table><thead><tr><th>Client</th><th>Nature du service</th><th>Montant</th><th>Somme perçue</th><th>Reste à payer</th><th>Échéance</th><th>Statut</th><th></th></tr></thead><tbody id="body"></tbody></table></div>
@@ -140,9 +140,6 @@ $('add').addEventListener('click',function(){$('q').value='';$('f').value='';row
 ['q','f'].forEach(function(i){$(i).addEventListener('input',table)});
 $('thr').addEventListener('change',function(){save();all();alerts()});$('cur').addEventListener('input',function(){save();dash()});
 $('wipe').addEventListener('click',function(){if(rows.length&&confirm('Supprimer toutes les données ?')){rows=[];save();all()}});
-$('demo').addEventListener('click',function(){var t=today(),a=function(n){return iso(new Date(t.getFullYear(),t.getMonth(),t.getDate()+n))};
- if(rows.length&&!confirm('Ajouter des données d’exemple aux données actuelles ?'))return;
- [['Société Alpha','Audit comptable',1500000,600000,-12],['Groupe Bétaville','Conseil juridique',800000,0,3],['Delta Négoce','Formation',450000,450000,-30],['Omega SARL','Création de site web',1200000,300000,20],['Kappa Logistics','Étude de marché',950000,200000,-5]].forEach(function(x){rows.push(newRow({client:x[0],service:x[1],amount:x[2],paid:x[3],due:a(x[4])}))});save();all();alerts()});
 
 /* Import / export */
 var RULES=[['reste',['reste','solde','impaye']],['due',['echeance','limite','date']],['paid',['percu','paye','encaisse','verse','regle','acompte']],['amount',['montant','total','facture','prestation']],['client',['client','debiteur','societe','nom']],['service',['service','nature','objet']]];
@@ -178,6 +175,7 @@ document.addEventListener('visibilitychange',function(){if(!document.hidden){all
 setInterval(function(){all();alerts()},3600000);
 
 try{rows=JSON.parse(localStorage.getItem(KEY))||[];var s=JSON.parse(localStorage.getItem(SKEY)||'{}');if(s.t!=null)$('thr').value=s.t;if(s.c!=null)$('cur').value=s.c}catch(e){rows=[]}
+var lg=$('logo');function fb(){var m=document.createElement('span');m.className='mark';m.textContent='AMAA';lg.replaceWith(m)}if(lg.complete&&!lg.naturalWidth)fb();else lg.addEventListener('error',fb);
 notifLabel();all();alerts();
 })();
 </script>
